@@ -1,0 +1,6 @@
+PROJETO
+    Resolver o problema
+    Começar pelo domínio - Pasta Domain
+    
+VS
+    FileScoped
