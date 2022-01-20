@@ -6,7 +6,8 @@ namespace IWantApp.Endpoints.Categories;
 
 public class CategoryPut
 {
-    public static string Template => "/categories/{id}";                                  //Rota do meu Template, Ao criar a unidade templete "=>" seta o "/" 
+                                                   //↓":" informa meu tipo 
+    public static string Template => "/categories/{id:guid}";                        //Rota do meu Template, Ao criar a unidade templete "=>" seta o "/"  
     public static string[] Methods => new string[] { HttpMethod.Put.ToString() };    //Métodos de acesso
     public static Delegate Handle=> Action;                                          //Minha ação
 
@@ -14,8 +15,13 @@ public class CategoryPut
     {
         var category = context.Categories.Where(c => c.Id == id).FirstOrDefault();
         
-        category.Name= categoryRequest.Name;
-        category.Active=categoryRequest.Active;
+        if (category == null)
+            return Results.NotFound();
+
+        category.EditInfo(categoryRequest.Name, categoryRequest.Active);
+
+        if (!category.IsValid)
+            return Results.ValidationProblem(category.Notifications.ConvertToProblemDetails());
      
         context.SaveChanges();
        

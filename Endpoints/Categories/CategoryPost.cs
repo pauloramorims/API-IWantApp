@@ -10,18 +10,13 @@ public class CategoryPost
     public static Delegate Handle=> Action;  //Minha ação
 
     public static IResult Action (CategoryRequest categoryRequest, ApplicationDbContext context)
-    {       
-        var category = new Category(categoryRequest.Name)
-        {
-            CreatedBy = "Teste",
-            CreateOn = DateTime.Now,
-            EditedBy = "Teste",
-            EditedOn = DateTime.Now,
-        };
-
+    {
+        var category = new Category(categoryRequest.Name, "Teste", "Teste"); 
 
         if (!category.IsValid)//Retorna mensagem de erro
-            return Results.BadRequest(category.Notifications);
+        {
+            return Results.ValidationProblem(category.Notifications.ConvertToProblemDetails());
+        }
         
         context.Categories.Add(category);
         context.SaveChanges();
